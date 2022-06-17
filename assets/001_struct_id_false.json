@@ -1,0 +1,10 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer",
+        "index": false
+      }
+    }
+  }
+}
