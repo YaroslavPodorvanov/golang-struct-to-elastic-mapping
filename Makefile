@@ -1,0 +1,3 @@
+all:
+	go fmt ./...
+	go test ./... -v -bench=. -benchmem
