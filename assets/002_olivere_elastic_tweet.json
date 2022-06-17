@@ -1,0 +1,21 @@
+{
+  "mappings": {
+    "properties": {
+      "user": {
+        "type": "keyword"
+      },
+      "message": {
+        "type": "text"
+      },
+      "retweets": {
+        "type": "integer"
+      },
+      "created": {
+        "type": "date"
+      },
+      "attributes": {
+        "type": "object"
+      }
+    }
+  }
+}
