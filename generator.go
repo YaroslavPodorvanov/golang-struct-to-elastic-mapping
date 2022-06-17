@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
+	"time"
 )
 
 func Generate(i any) ([]byte, error) {
@@ -29,9 +31,9 @@ func generateBytes(i any) ([]byte, error) {
 
 	for i := 0; i < length; i++ {
 		var (
-			field        = value.Type().Field(i)
-			propertyName = field.Tag.Get("json")
-			propertyType string
+			field              = value.Type().Field(i)
+			propertyName, _, _ = strings.Cut(field.Tag.Get("json"), ",")
+			propertyType       string
 		)
 
 		if propertyName == "" {
@@ -66,6 +68,10 @@ func generateBytes(i any) ([]byte, error) {
 			propertyType = "boolean"
 		case reflect.String:
 			propertyType = "text"
+		case reflect.TypeOf(time.Time{}).Kind():
+			propertyType = "date"
+		case reflect.TypeOf(map[string]interface{}{}).Kind():
+			propertyType = "object"
 		default:
 			return nil, errors.New(fmt.Sprintf("cannot found %s", field.Type.String()))
 		}

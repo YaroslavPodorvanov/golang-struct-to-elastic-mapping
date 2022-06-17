@@ -65,19 +65,24 @@ func TestGenerate(t *testing.T) {
   "mappings": {
     "properties": {
       "user": {
-        "type": "keyword"
+        "type": "text",
+        "index": false
       },
       "message": {
-        "type": "text"
+        "type": "text",
+        "index": false
       },
       "retweets": {
-        "type": "integer"
+        "type": "integer",
+        "index": false
       },
       "created": {
-        "type": "date"
+        "type": "date",
+        "index": false
       },
       "attributes": {
-        "type": "object"
+        "type": "object",
+        "index": false
       }
     }
   }
@@ -91,11 +96,15 @@ func TestGenerate(t *testing.T) {
 }
 
 func BenchmarkGenerate(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		type User struct {
-			ID int `json:"id"`
-		}
+	type Tweet struct {
+		User     string                 `json:"user"`
+		Message  string                 `json:"message"`
+		Retweets int                    `json:"retweets"`
+		Created  time.Time              `json:"created"`
+		Attrs    map[string]interface{} `json:"attributes,omitempty"`
+	}
 
-		_, _ = Generate(&User{})
+	for i := 0; i < b.N; i++ {
+		_, _ = Generate(&Tweet{})
 	}
 }

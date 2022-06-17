@@ -2,19 +2,24 @@
   "mappings": {
     "properties": {
       "user": {
-        "type": "keyword"
+        "type": "keyword",
+        "index": false
       },
       "message": {
-        "type": "text"
+        "type": "text",
+        "index": false
       },
       "retweets": {
-        "type": "integer"
+        "type": "integer",
+        "index": false
       },
       "created": {
-        "type": "date"
+        "type": "date",
+        "index": false
       },
       "attributes": {
-        "type": "object"
+        "type": "object",
+        "index": false
       }
     }
   }
