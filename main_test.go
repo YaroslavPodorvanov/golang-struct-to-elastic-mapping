@@ -41,8 +41,7 @@ func TestGenerate(t *testing.T) {
   "mappings": {
     "properties": {
       "id": {
-        "type": "integer",
-        "index": false
+        "type": "integer"
       }
     }
   }
@@ -61,7 +60,7 @@ func TestGenerate(t *testing.T) {
 			Message  string                 `json:"message"`
 			Retweets int                    `json:"retweets"`
 			Created  time.Time              `json:"created"`
-			Attrs    map[string]interface{} `json:"attributes,omitempty"`
+			Attrs    map[string]interface{} `json:"attributes"`
 		}
 
 		// language=JSON
@@ -69,24 +68,19 @@ func TestGenerate(t *testing.T) {
   "mappings": {
     "properties": {
       "user": {
-        "type": "text",
-        "index": false
+        "type": "text"
       },
       "message": {
-        "type": "text",
-        "index": false
+        "type": "text"
       },
       "retweets": {
-        "type": "integer",
-        "index": false
+        "type": "integer"
       },
       "created": {
-        "type": "date",
-        "index": false
+        "type": "date"
       },
       "attributes": {
-        "type": "object",
-        "index": false
+        "type": "object"
       }
     }
   }
@@ -97,6 +91,48 @@ func TestGenerate(t *testing.T) {
 		kindConverter.Set(reflect.TypeOf(map[string]interface{}{}).Kind(), "object")
 
 		var result, err = generator.NewGenerator(kindConverter).Generate(&Tweet{})
+
+		require.NoError(t, err)
+		require.Equal(t, expected, string(result))
+	}
+
+	// tags
+	{
+		// language=JSON
+		const expected = `{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer",
+        "index": true
+      },
+      "alias": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text"
+      },
+      "employee_count": {
+        "type": "integer",
+        "index": false
+      }
+    }
+  }
+}`
+
+		type Company struct {
+			ID            int    `json:"id" es:"index:true"`
+			Alias         string `json:"alias" es:"type:keyword,index:true"`
+			Name          string `json:"name" es:"type:text"`
+			Description   string `json:"description" es:"type:text"`
+			EmployeeCount int    `json:"employee_count" es:"index:false"`
+		}
+
+		var result, err = generator.Generate(&Company{})
 
 		require.NoError(t, err)
 		require.Equal(t, expected, string(result))

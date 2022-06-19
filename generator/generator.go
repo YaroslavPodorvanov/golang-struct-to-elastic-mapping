@@ -1,12 +1,14 @@
 package generator
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/converter"
+	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/mapping"
 )
 
 type Generator struct {
@@ -45,20 +47,34 @@ func (g *Generator) properties(i any) ([]byte, error) {
 
 	for i := 0; i < length; i++ {
 		var (
-			field              = value.Type().Field(i)
-			propertyName, _, _ = strings.Cut(field.Tag.Get("json"), ",")
-			propertyType       = g.kindConverter.Get(field.Type.Kind())
+			field                  = value.Type().Field(i)
+			jsonPropertyName, _, _ = strings.Cut(field.Tag.Get("json"), ",")
+			tags                   = parseTags(field.Tag.Get("es"))
+			propertyType           = tags.typeName
 		)
 
-		if propertyName == "" {
-			propertyName = field.Name
+		if jsonPropertyName == "" {
+			jsonPropertyName = field.Name
+		}
+
+		if propertyType == "" {
+			propertyType = g.kindConverter.Get(field.Type.Kind())
 		}
 
 		if propertyType == "" {
 			return nil, errors.New(fmt.Sprintf("cannot found %s", field.Type.String()))
 		}
 
-		result = append(result, fmt.Sprintf(`"%s":{"type":"%s","index":false}`, propertyName, propertyType)...)
+		var property, err = json.Marshal(&mapping.Property{
+			Type:  propertyType,
+			Index: tags.index,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, fmt.Sprintf(`"%s":`, jsonPropertyName)...)
+		result = append(result, property...)
 
 		if !lastIndex(length, i) {
 			result = append(result, ',')
