@@ -9,3 +9,8 @@ type Index struct {
 type IndexMappings struct {
 	Properties json.RawMessage `json:"properties"`
 }
+
+type Property struct {
+	Type  string `json:"type"`
+	Index *bool  `json:"index,omitempty"`
+}

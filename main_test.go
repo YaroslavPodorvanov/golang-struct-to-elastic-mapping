@@ -41,8 +41,7 @@ func TestGenerate(t *testing.T) {
   "mappings": {
     "properties": {
       "id": {
-        "type": "integer",
-        "index": false
+        "type": "integer"
       }
     }
   }
@@ -69,24 +68,19 @@ func TestGenerate(t *testing.T) {
   "mappings": {
     "properties": {
       "user": {
-        "type": "text",
-        "index": false
+        "type": "text"
       },
       "message": {
-        "type": "text",
-        "index": false
+        "type": "text"
       },
       "retweets": {
-        "type": "integer",
-        "index": false
+        "type": "integer"
       },
       "created": {
-        "type": "date",
-        "index": false
+        "type": "date"
       },
       "attributes": {
-        "type": "object",
-        "index": false
+        "type": "object"
       }
     }
   }
