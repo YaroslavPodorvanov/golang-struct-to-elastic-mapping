@@ -1,8 +1,12 @@
 package mapping
 
 import (
+	"reflect"
 	"testing"
 	"time"
+
+	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/converter"
+	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/generator"
 
 	"github.com/stretchr/testify/require"
 )
@@ -20,10 +24,10 @@ func TestGenerate(t *testing.T) {
   }
 }`
 
-		var result, err = Generate(&Empty{})
+		var result, err = generator.Generate(&Empty{})
 
-		require.Equal(t, expected, string(result))
 		require.NoError(t, err)
+		require.Equal(t, expected, string(result))
 	}
 
 	// empty
@@ -44,10 +48,10 @@ func TestGenerate(t *testing.T) {
   }
 }`
 
-		var result, err = Generate(&User{})
+		var result, err = generator.Generate(&User{})
 
-		require.Equal(t, expected, string(result))
 		require.NoError(t, err)
+		require.Equal(t, expected, string(result))
 	}
 
 	// tweet https://github.com/olivere/elastic/blob/29ee98974cf1984dfecf53ef772d721fb97cb0b9/recipes/mapping/mapping.go#L57
@@ -88,10 +92,14 @@ func TestGenerate(t *testing.T) {
   }
 }`
 
-		var result, err = Generate(&Tweet{})
+		var kindConverter = converter.DefaultKindConverter()
 
-		require.Equal(t, expected, string(result))
+		kindConverter.Set(reflect.TypeOf(map[string]interface{}{}).Kind(), "object")
+
+		var result, err = generator.NewGenerator(kindConverter).Generate(&Tweet{})
+
 		require.NoError(t, err)
+		require.Equal(t, expected, string(result))
 	}
 }
 
@@ -101,10 +109,16 @@ func BenchmarkGenerate(b *testing.B) {
 		Message  string                 `json:"message"`
 		Retweets int                    `json:"retweets"`
 		Created  time.Time              `json:"created"`
-		Attrs    map[string]interface{} `json:"attributes,omitempty"`
+		Attrs    map[string]interface{} `json:"attributes"`
 	}
 
+	var kindConverter = converter.DefaultKindConverter()
+
+	kindConverter.Set(reflect.TypeOf(map[string]interface{}{}).Kind(), "object")
+
+	var generator = generator.NewGenerator(kindConverter)
+
 	for i := 0; i < b.N; i++ {
-		_, _ = Generate(&Tweet{})
+		_, _ = generator.Generate(&Tweet{})
 	}
 }
