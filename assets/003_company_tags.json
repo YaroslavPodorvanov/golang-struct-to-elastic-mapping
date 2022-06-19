@@ -1,0 +1,24 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer",
+        "index": true
+      },
+      "alias": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text"
+      },
+      "employee_count": {
+        "type": "integer",
+        "index": false
+      }
+    }
+  }
+}
