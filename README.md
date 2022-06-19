@@ -61,3 +61,7 @@ func TestGenerate(t *testing.T) {
 
 ### Elasticsearch Guide
 * [Field data types](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html)
+
+### TODOs
+* Elasticsearch type "binary"
+* Elasticsearch type "keyword"
