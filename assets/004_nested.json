@@ -1,0 +1,62 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text"
+      },
+      "company": {
+        "type": "nested",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "required_skills": {
+        "type": "nested",
+        "properties": {
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "preferred_skills": {
+        "type": "nested",
+        "properties": {
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "desired_skills": {
+        "type": "nested",
+        "properties": {
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,11 +1,9 @@
 package mapping
 
 import (
-	"reflect"
 	"testing"
 	"time"
 
-	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/converter"
 	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/generator"
 
 	"github.com/stretchr/testify/require"
@@ -59,8 +57,8 @@ func TestGenerate(t *testing.T) {
 			User     string                 `json:"user"`
 			Message  string                 `json:"message"`
 			Retweets int                    `json:"retweets"`
-			Created  time.Time              `json:"created"`
-			Attrs    map[string]interface{} `json:"attributes"`
+			Created  time.Time              `json:"created" es:"type:date"`
+			Attrs    map[string]interface{} `json:"attributes" es:"type:object"`
 		}
 
 		// language=JSON
@@ -86,11 +84,7 @@ func TestGenerate(t *testing.T) {
   }
 }`
 
-		var kindConverter = converter.DefaultKindConverter()
-
-		kindConverter.Set(reflect.TypeOf(map[string]interface{}{}).Kind(), "object")
-
-		var result, err = generator.NewGenerator(kindConverter).Generate(&Tweet{})
+		var result, err = generator.Generate(&Tweet{})
 
 		require.NoError(t, err)
 		require.Equal(t, expected, string(result))
@@ -137,24 +131,123 @@ func TestGenerate(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, expected, string(result))
 	}
+
+	{
+		// language=JSON
+		const expected = `{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text"
+      },
+      "company": {
+        "type": "nested",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "required_skills": {
+        "type": "nested",
+        "properties": {
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "preferred_skills": {
+        "type": "nested",
+        "properties": {
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "desired_skills": {
+        "type": "nested",
+        "properties": {
+          "alias": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      }
+    }
+  }
+}`
+
+		type Alias struct {
+			Alias string `json:"alias"`
+			Name  string `json:"name"`
+		}
+
+		type Company struct {
+			ID    int    `json:"id"`
+			Alias string `json:"alias"`
+			Name  string `json:"name"`
+		}
+
+		type Vacancy struct {
+			ID              int     `json:"id"`
+			Title           string  `json:"title"`
+			Description     string  `json:"description"`
+			Company         Company `json:"company"`
+			RequiredSkills  []Alias `json:"required_skills"`
+			PreferredSkills []Alias `json:"preferred_skills"`
+			DesiredSkills   []Alias `json:"desired_skills"`
+		}
+
+		var result, err = generator.Generate(&Vacancy{})
+
+		require.NoError(t, err)
+		require.Equal(t, expected, string(result))
+	}
 }
 
 func BenchmarkGenerate(b *testing.B) {
-	type Tweet struct {
-		User     string                 `json:"user"`
-		Message  string                 `json:"message"`
-		Retweets int                    `json:"retweets"`
-		Created  time.Time              `json:"created"`
-		Attrs    map[string]interface{} `json:"attributes"`
-	}
+type Alias struct {
+	Alias string `json:"alias"`
+	Name  string `json:"name"`
+}
 
-	var kindConverter = converter.DefaultKindConverter()
+type Company struct {
+	ID    int    `json:"id"`
+	Alias string `json:"alias"`
+	Name  string `json:"name"`
+}
 
-	kindConverter.Set(reflect.TypeOf(map[string]interface{}{}).Kind(), "object")
-
-	var generator = generator.NewGenerator(kindConverter)
+type Vacancy struct {
+	ID              int     `json:"id"`
+	Title           string  `json:"title"`
+	Description     string  `json:"description"`
+	Company         Company `json:"company"`
+	RequiredSkills  []Alias `json:"required_skills"`
+	PreferredSkills []Alias `json:"preferred_skills"`
+	DesiredSkills   []Alias `json:"desired_skills"`
+}
 
 	for i := 0; i < b.N; i++ {
-		_, _ = generator.Generate(&Tweet{})
+		_, _ = generator.Generate(&Vacancy{})
 	}
 }
