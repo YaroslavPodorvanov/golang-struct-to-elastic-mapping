@@ -2,7 +2,8 @@
   "mappings": {
     "properties": {
       "id": {
-        "type": "integer"
+        "type": "integer",
+        "index": true
       },
       "title": {
         "type": "text"
@@ -14,10 +15,12 @@
         "type": "nested",
         "properties": {
           "id": {
-            "type": "integer"
+            "type": "integer",
+            "index": true
           },
           "alias": {
-            "type": "text"
+            "type": "keyword",
+            "index": true
           },
           "name": {
             "type": "text"
@@ -28,7 +31,8 @@
         "type": "nested",
         "properties": {
           "alias": {
-            "type": "text"
+            "type": "keyword",
+            "index": true
           },
           "name": {
             "type": "text"
@@ -39,7 +43,8 @@
         "type": "nested",
         "properties": {
           "alias": {
-            "type": "text"
+            "type": "keyword",
+            "index": true
           },
           "name": {
             "type": "text"
@@ -50,7 +55,8 @@
         "type": "nested",
         "properties": {
           "alias": {
-            "type": "text"
+            "type": "keyword",
+            "index": true
           },
           "name": {
             "type": "text"

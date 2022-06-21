@@ -1,4 +1,4 @@
-package mapping
+package main
 
 import (
 	"testing"
@@ -131,121 +131,29 @@ func TestGenerate(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, expected, string(result))
 	}
-
-	{
-		// language=JSON
-		const expected = `{
-  "mappings": {
-    "properties": {
-      "id": {
-        "type": "integer"
-      },
-      "title": {
-        "type": "text"
-      },
-      "description": {
-        "type": "text"
-      },
-      "company": {
-        "type": "nested",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "alias": {
-            "type": "text"
-          },
-          "name": {
-            "type": "text"
-          }
-        }
-      },
-      "required_skills": {
-        "type": "nested",
-        "properties": {
-          "alias": {
-            "type": "text"
-          },
-          "name": {
-            "type": "text"
-          }
-        }
-      },
-      "preferred_skills": {
-        "type": "nested",
-        "properties": {
-          "alias": {
-            "type": "text"
-          },
-          "name": {
-            "type": "text"
-          }
-        }
-      },
-      "desired_skills": {
-        "type": "nested",
-        "properties": {
-          "alias": {
-            "type": "text"
-          },
-          "name": {
-            "type": "text"
-          }
-        }
-      }
-    }
-  }
-}`
-
-		type Alias struct {
-			Alias string `json:"alias"`
-			Name  string `json:"name"`
-		}
-
-		type Company struct {
-			ID    int    `json:"id"`
-			Alias string `json:"alias"`
-			Name  string `json:"name"`
-		}
-
-		type Vacancy struct {
-			ID              int     `json:"id"`
-			Title           string  `json:"title"`
-			Description     string  `json:"description"`
-			Company         Company `json:"company"`
-			RequiredSkills  []Alias `json:"required_skills"`
-			PreferredSkills []Alias `json:"preferred_skills"`
-			DesiredSkills   []Alias `json:"desired_skills"`
-		}
-
-		var result, err = generator.Generate(&Vacancy{})
-
-		require.NoError(t, err)
-		require.Equal(t, expected, string(result))
-	}
 }
 
 func BenchmarkGenerate(b *testing.B) {
-type Alias struct {
-	Alias string `json:"alias"`
-	Name  string `json:"name"`
-}
+	type Alias struct {
+		Alias string `json:"alias" es:"type:keyword,index:true"`
+		Name  string `json:"name" es:"type:text"`
+	}
 
-type Company struct {
-	ID    int    `json:"id"`
-	Alias string `json:"alias"`
-	Name  string `json:"name"`
-}
+	type Company struct {
+		ID    int    `json:"id" es:"index:true"`
+		Alias string `json:"alias" es:"type:keyword,index:true"`
+		Name  string `json:"name" es:"type:text"`
+	}
 
-type Vacancy struct {
-	ID              int     `json:"id"`
-	Title           string  `json:"title"`
-	Description     string  `json:"description"`
-	Company         Company `json:"company"`
-	RequiredSkills  []Alias `json:"required_skills"`
-	PreferredSkills []Alias `json:"preferred_skills"`
-	DesiredSkills   []Alias `json:"desired_skills"`
-}
+	type Vacancy struct {
+		ID              int     `json:"id" es:"index:true"`
+		Title           string  `json:"title" es:"type:text"`
+		Description     string  `json:"description" es:"type:text"`
+		Company         Company `json:"company"`
+		RequiredSkills  []Alias `json:"required_skills"`
+		PreferredSkills []Alias `json:"preferred_skills"`
+		DesiredSkills   []Alias `json:"desired_skills"`
+	}
 
 	for i := 0; i < b.N; i++ {
 		_, _ = generator.Generate(&Vacancy{})
