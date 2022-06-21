@@ -4,17 +4,29 @@
 ```golang
 package main
 
-import (
-	"testing"
+type Alias struct {
+    Alias string `json:"alias" es:"type:keyword,index:true"`
+    Name  string `json:"name" es:"type:text"`
+}
 
-	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/generator"
+type Company struct {
+    ID    int    `json:"id" es:"index:true"`
+    Alias string `json:"alias" es:"type:keyword,index:true"`
+    Name  string `json:"name" es:"type:text"`
+}
 
-	"github.com/stretchr/testify/require"
-)
-
-func TestExample(t *testing.T) {
-	// language=JSON
-	const expected = `{
+type Vacancy struct {
+    ID              int     `json:"id" es:"index:true"`
+    Title           string  `json:"title" es:"type:text"`
+    Description     string  `json:"description" es:"type:text"`
+    Company         Company `json:"company"`
+    RequiredSkills  []Alias `json:"required_skills"`
+    PreferredSkills []Alias `json:"preferred_skills"`
+    DesiredSkills   []Alias `json:"desired_skills"`
+}
+```
+```json
+{
   "mappings": {
     "properties": {
       "id": {
@@ -81,28 +93,22 @@ func TestExample(t *testing.T) {
       }
     }
   }
-}`
+}
+```
+```golang
+package main
 
-	type Alias struct {
-		Alias string `json:"alias" es:"type:keyword,index:true"`
-		Name  string `json:"name" es:"type:text"`
-	}
+import (
+	"testing"
 
-	type Company struct {
-		ID    int    `json:"id" es:"index:true"`
-		Alias string `json:"alias" es:"type:keyword,index:true"`
-		Name  string `json:"name" es:"type:text"`
-	}
+	"github.com/YaroslavPodorvanov/golang-struct-to-elastic-mapping/generator"
 
-	type Vacancy struct {
-		ID              int     `json:"id" es:"index:true"`
-		Title           string  `json:"title" es:"type:text"`
-		Description     string  `json:"description" es:"type:text"`
-		Company         Company `json:"company"`
-		RequiredSkills  []Alias `json:"required_skills"`
-		PreferredSkills []Alias `json:"preferred_skills"`
-		DesiredSkills   []Alias `json:"desired_skills"`
-	}
+	"github.com/stretchr/testify/require"
+)
+
+func TestExample(t *testing.T) {
+	// language=JSON
+	const expected = `...`
 
 	var result, err = generator.Generate(&Vacancy{})
 
