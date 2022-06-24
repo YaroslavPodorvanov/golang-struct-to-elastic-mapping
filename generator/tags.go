@@ -7,8 +7,12 @@ type tags struct {
 	index    *bool
 }
 
-func parseTags(s string) tags {
+func parseTags(s string) (_ tags, skip bool) {
 	var result tags
+
+	if s == "-" {
+		return tags{}, true
+	}
 
 	var pairs = strings.Split(s, ",")
 	for _, pair := range pairs {
@@ -23,5 +27,5 @@ func parseTags(s string) tags {
 		}
 	}
 
-	return result
+	return result, false
 }

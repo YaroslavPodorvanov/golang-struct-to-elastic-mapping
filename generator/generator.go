@@ -50,9 +50,14 @@ MAIN:
 			field                  = t.Field(i)
 			fieldType              = field.Type
 			jsonPropertyName, _, _ = strings.Cut(field.Tag.Get("json"), ",")
-			tags                   = parseTags(field.Tag.Get("es"))
+			tags, skip             = parseTags(field.Tag.Get("es"))
 			propertyType           = tags.typeName
 		)
+
+		// @TODO: if last then incorrect JSON
+		if skip {
+			continue
+		}
 
 		if jsonPropertyName == "" {
 			jsonPropertyName = field.Name
