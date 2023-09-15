@@ -91,13 +91,13 @@ func TestExample(t *testing.T) {
 	}
 
 	type Vacancy struct {
-		ID              int     `json:"id" es:"index:true"`
-		Title           string  `json:"title" es:"type:text"`
-		Description     string  `json:"description" es:"type:text"`
+		ID              int      `json:"id" es:"index:true"`
+		Title           string   `json:"title" es:"type:text"`
+		Description     string   `json:"description" es:"type:text"`
 		Company         *Company `json:"company"`
-		RequiredSkills  []Alias `json:"required_skills"`
-		PreferredSkills []Alias `json:"preferred_skills"`
-		DesiredSkills   []Alias `json:"desired_skills"`
+		RequiredSkills  []Alias  `json:"required_skills"`
+		PreferredSkills []Alias  `json:"preferred_skills"`
+		DesiredSkills   []Alias  `json:"desired_skills"`
 	}
 
 	var result, err = generator.Generate(&Vacancy{})
