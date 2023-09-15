@@ -69,6 +69,28 @@ MAIN:
 
 		if propertyType == "" {
 			switch fieldType.Kind() {
+			case reflect.Pointer:
+				var properties, err = g.properties(fieldType.Elem())
+				if err != nil {
+					return nil, err
+				}
+
+				var property, marshalErr = json.Marshal(&mapping.NestedProperties{
+					Type:       "nested",
+					Properties: properties,
+				})
+				if marshalErr != nil {
+					return nil, marshalErr
+				}
+
+				result = append(result, fmt.Sprintf(`"%s":`, jsonPropertyName)...)
+				result = append(result, property...)
+
+				if !lastIndex(length, i) {
+					result = append(result, ',')
+				}
+
+				continue MAIN
 			case reflect.Struct:
 				var properties, err = g.properties(fieldType)
 				if err != nil {
