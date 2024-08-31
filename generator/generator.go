@@ -114,6 +114,11 @@ MAIN:
 
 				continue MAIN
 			case reflect.Slice:
+				if fieldType.Elem().Kind() != reflect.Struct {
+					propertyType = g.kindConverter.Get(fieldType.Elem().Kind())
+					break
+				}
+
 				var properties, err = g.properties(fieldType.Elem())
 				if err != nil {
 					return nil, err

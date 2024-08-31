@@ -105,3 +105,48 @@ func TestExample(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, expected, string(result))
 }
+
+func TestArrayExample(t *testing.T) {
+	// language=JSON
+	const expected = `{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer",
+        "index": true
+      },
+      "alias": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text"
+      },
+      "employee_count": {
+        "type": "integer",
+        "index": false
+      },
+      "urls": {
+        "type": "text"
+      }
+    }
+  }
+}`
+
+	type Company struct {
+		ID            int      `json:"id" es:"index:true"`
+		Alias         string   `json:"alias" es:"type:keyword,index:true"`
+		Name          string   `json:"name" es:"type:text"`
+		Description   string   `json:"description" es:"type:text"`
+		EmployeeCount int      `json:"employee_count" es:"index:false"`
+		URLs          []string `json:"urls"`
+	}
+
+	var result, err = generator.Generate(&Company{})
+
+	require.NoError(t, err)
+	require.Equal(t, expected, string(result))
+}
