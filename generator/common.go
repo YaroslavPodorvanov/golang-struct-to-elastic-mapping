@@ -13,7 +13,3 @@ func wrap(properties []byte) ([]byte, error) {
 		},
 	}, "", "  ")
 }
-
-func lastIndex(length, index int) bool {
-	return length-1 == index
-}
